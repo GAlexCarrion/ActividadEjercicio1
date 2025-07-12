@@ -1,8 +1,8 @@
 // screens/EliminarProductos.tsx
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { ref, remove } from 'firebase/database';
-import { db } from '../firebase/Config'; // Ruta actualizada a firebase/Config.tsx
+import { db } from '../firebase/Config';
 
 const EliminarProductosScreen = () => {
   const [productId, setProductId] = useState('');
@@ -48,16 +48,15 @@ const EliminarProductosScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="ID del Producto a Eliminar"
+        placeholderTextColor="#888"
         value={productId}
         onChangeText={setProductId}
         autoCapitalize="none"
       />
 
-      <Button
-        title="Eliminar Producto"
-        onPress={eliminar}
-        color="#dc3545"
-      />
+      <TouchableOpacity style={styles.deleteButton} onPress={eliminar}>
+        <Text style={styles.buttonText}>Eliminar Producto</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -67,25 +66,51 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#f8f9fa',
+    padding: 25,
+    backgroundColor: '#fcfcfc',
   },
   title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    color: '#343a40',
+    fontSize: 30,
+    fontWeight: '700',
+    marginBottom: 35,
+    color: '#212121',
     textAlign: 'center',
+    letterSpacing: 0.5,
   },
   input: {
-    width: '90%',
-    padding: 12,
+    width: '95%',
+    padding: 16,
     borderWidth: 1,
-    borderColor: '#ced4da',
-    borderRadius: 8,
-    marginBottom: 15,
-    fontSize: 16,
-    backgroundColor: '#fff',
+    borderColor: '#bdbdbd',
+    borderRadius: 12,
+    marginBottom: 25,
+    fontSize: 17,
+    backgroundColor: '#ffffff',
+    color: '#424242',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  deleteButton: {
+    width: '95%',
+    padding: 18,
+    borderRadius: 12,
+    backgroundColor: '#D32F2F', // Rojo principal para eliminar
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 19,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
 });
 

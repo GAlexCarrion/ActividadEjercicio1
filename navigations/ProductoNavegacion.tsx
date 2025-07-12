@@ -1,14 +1,11 @@
-// navigations/ProductoNavegacion.tsx
 import React from 'react';
 import { createStackNavigator } from '@react-navigation/stack';
 
-// Importa tus pantallas con los nuevos nombres
 import CrearProductosScreen from '../screens/CrearProductos';
 import LeerProductosScreen from '../screens/LeerProductos';
 import EditarProductosScreen from '../screens/EditarProductos';
 import EliminarProductosScreen from '../screens/EliminarProductos';
 
-// Define los tipos para el Stack Navigator de Productos con los nuevos nombres
 export type ProductStackParamList = {
   CrearProductos: undefined;
   LeerProductos: undefined;
@@ -24,7 +21,7 @@ const ProductoNavegacion = () => {
       <ProductStack.Screen
         name="CrearProductos"
         component={CrearProductosScreen}
-        options={{ title: 'Registrar Nuevo Producto' }}
+        options={{ title: 'Registro de Productos' }}
       />
       <ProductStack.Screen
         name="LeerProductos"

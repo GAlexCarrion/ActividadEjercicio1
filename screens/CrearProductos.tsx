@@ -1,11 +1,11 @@
 // screens/CrearProductos.tsx
 import React, { useState, useEffect } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, ScrollView, TouchableOpacity } from 'react-native';
 import { ref, set, push } from 'firebase/database';
-import { db } from '../firebase/Config'; // Ruta actualizada a firebase/Config.tsx
+import { db } from '../firebase/Config';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { ProductStackParamList } from '../navigations/ProductoNavegacion'; // Ruta actualizada a ProductoNavegacion
+import { ProductStackParamList } from '../navigations/ProductoNavegacion';
 
 type CrearProductosScreenNavigationProp = StackNavigationProp<ProductStackParamList, 'CrearProductos'>;
 
@@ -77,17 +77,25 @@ const CrearProductosScreen = () => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.title}>Registrar Nuevo Producto</Text>
+      <View style={styles.header}>
+        {/* Icono de Producto (SVG inline) */}
+        <View style={styles.iconContainer}>
+          <Text style={styles.icon}>📦</Text>
+        </View>
+        <Text style={styles.title}>Registrar Nuevo Producto</Text>
+      </View>
 
       <TextInput
         style={styles.input}
         placeholder="Nombre del Producto"
+        placeholderTextColor="#888"
         value={nombre}
         onChangeText={setNombre}
       />
       <TextInput
         style={styles.input}
         placeholder="Precio Original"
+        placeholderTextColor="#888"
         value={precio}
         onChangeText={setPrecio}
         keyboardType="numeric"
@@ -99,29 +107,27 @@ const CrearProductosScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="Categoría"
+        placeholderTextColor="#888"
         value={categoria}
         onChangeText={setCategoria}
       />
       <TextInput
         style={styles.input}
         placeholder="Stock"
+        placeholderTextColor="#888"
         value={stock}
         onChangeText={setStock}
         keyboardType="numeric"
       />
 
-      <Button
-        title="Guardar Producto"
-        onPress={guardar}
-        color="#28a745"
-      />
+      <TouchableOpacity style={styles.primaryButton} onPress={guardar}>
+        <Text style={styles.buttonText}>Guardar Producto</Text>
+      </TouchableOpacity>
 
       <View style={styles.buttonSpacer} />
-      <Button
-        title="Ver Lista de Productos"
-        onPress={() => navigation.navigate('LeerProductos')}
-        color="#007bff"
-      />
+      <TouchableOpacity style={styles.secondaryButton} onPress={() => navigation.navigate('LeerProductos')}>
+        <Text style={styles.buttonText}>Ver Lista de Productos</Text>
+      </TouchableOpacity>
     </ScrollView>
   );
 };
@@ -131,48 +137,109 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#f8f9fa',
+    padding: 25,
+    backgroundColor: '#fcfcfc', // Fondo muy claro, casi blanco
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 35,
+  },
+  iconContainer: {
+    marginRight: 10,
+    backgroundColor: '#D32F2F', // Fondo rojo para el icono
+    borderRadius: 8,
+    padding: 5,
+  },
+  icon: {
+    fontSize: 30, // Tamaño del icono
+    color: '#ffffff', // Color blanco para el icono
   },
   title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    color: '#343a40',
+    fontSize: 30,
+    fontWeight: '700',
+    color: '#212121', // Negro oscuro para el título
     textAlign: 'center',
+    letterSpacing: 0.5,
   },
   input: {
-    width: '90%',
-    padding: 12,
+    width: '95%',
+    padding: 16,
     borderWidth: 1,
-    borderColor: '#ced4da',
-    borderRadius: 8,
-    marginBottom: 15,
-    fontSize: 16,
-    backgroundColor: '#fff',
+    borderColor: '#bdbdbd', // Borde gris medio
+    borderRadius: 12,
+    marginBottom: 18,
+    fontSize: 17,
+    backgroundColor: '#ffffff',
+    color: '#424242', // Texto gris oscuro
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
   },
   discountedPriceContainer: {
-    width: '90%',
+    width: '95%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#e9ecef',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 15,
+    backgroundColor: '#ffebee', // Rojo muy claro para el contenedor de descuento
+    padding: 18,
+    borderRadius: 12,
+    marginBottom: 18,
+    borderWidth: 1,
+    borderColor: '#ef9a9a', // Borde rojo claro
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   discountedPriceLabel: {
-    fontSize: 16,
-    color: '#495057',
-    fontWeight: 'bold',
+    fontSize: 17,
+    color: '#D32F2F', // Rojo oscuro para la etiqueta
+    fontWeight: '600',
   },
   discountedPriceValue: {
-    fontSize: 18,
-    color: '#dc3545',
+    fontSize: 22,
+    color: '#D32F2F', // Rojo oscuro para el valor
     fontWeight: 'bold',
   },
+  primaryButton: {
+    width: '95%',
+    padding: 18,
+    borderRadius: 12,
+    backgroundColor: '#D32F2F', // Rojo principal para guardar
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  secondaryButton: {
+    width: '95%',
+    padding: 18,
+    borderRadius: 12,
+    backgroundColor: '#424242', // Gris oscuro para ver lista
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 19,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
+  },
   buttonSpacer: {
-    height: 15,
+    height: 20,
   },
 });
 

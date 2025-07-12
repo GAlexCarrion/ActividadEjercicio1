@@ -1,11 +1,11 @@
 // screens/EditarProductos.tsx
 import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView, ActivityIndicator } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Alert, ScrollView, ActivityIndicator, TouchableOpacity } from 'react-native';
 import { ref, update, get } from 'firebase/database';
-import { db } from '../firebase/Config'; // Ruta actualizada a firebase/Config.tsx
+import { db } from '../firebase/Config';
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { ProductStackParamList } from '../navigations/ProductoNavegacion'; // Ruta actualizada a ProductoNavegacion
+import { ProductStackParamList } from '../navigations/ProductoNavegacion';
 
 type EditarProductosScreenRouteProp = RouteProp<ProductStackParamList, 'EditarProductos'>;
 type EditarProductosScreenNavigationProp = StackNavigationProp<ProductStackParamList, 'EditarProductos'>;
@@ -121,22 +121,20 @@ const EditarProductosScreen = () => {
       <TextInput
         style={styles.input}
         placeholder="ID del Producto a Editar"
+        placeholderTextColor="#888"
         value={productIdInput}
         onChangeText={setProductIdInput}
         autoCapitalize="none"
         editable={!routeProductId}
       />
       {!routeProductId && (
-        <Button
-          title="Buscar Producto"
-          onPress={() => buscarProducto(productIdInput)}
-          color="#007bff"
-          disabled={loading}
-        />
+        <TouchableOpacity style={styles.primaryButton} onPress={() => buscarProducto(productIdInput)}>
+          <Text style={styles.buttonText}>Buscar Producto</Text>
+        </TouchableOpacity>
       )}
 
       {loading ? (
-        <ActivityIndicator size="small" color="#0000ff" style={{ marginTop: 15 }} />
+        <ActivityIndicator size="large" color="#D32F2F" style={{ marginTop: 20 }} />
       ) : null}
 
       {currentProduct ? (
@@ -148,6 +146,7 @@ const EditarProductosScreen = () => {
           <TextInput
             style={styles.input}
             placeholder="Nuevo Precio Original"
+            placeholderTextColor="#888"
             value={newPrecio}
             onChangeText={setNewPrecio}
             keyboardType="numeric"
@@ -159,15 +158,14 @@ const EditarProductosScreen = () => {
           <TextInput
             style={styles.input}
             placeholder="Nuevo Stock"
+            placeholderTextColor="#888"
             value={newStock}
             onChangeText={setNewStock}
             keyboardType="numeric"
           />
-          <Button
-            title="Actualizar Producto"
-            onPress={editar}
-            color="#ffc107"
-          />
+          <TouchableOpacity style={styles.updateButton} onPress={editar}>
+            <Text style={styles.buttonText}>Actualizar Producto</Text>
+          </TouchableOpacity>
         </View>
       ) : null}
     </ScrollView>
@@ -179,67 +177,104 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     justifyContent: 'flex-start',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#f8f9fa',
+    padding: 25,
+    backgroundColor: '#fcfcfc',
   },
   title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    marginBottom: 30,
-    color: '#343a40',
+    fontSize: 30,
+    fontWeight: '700',
+    marginBottom: 35,
+    color: '#212121',
     textAlign: 'center',
+    letterSpacing: 0.5,
   },
   input: {
-    width: '90%',
-    padding: 12,
+    width: '95%',
+    padding: 16,
     borderWidth: 1,
-    borderColor: '#ced4da',
-    borderRadius: 8,
+    borderColor: '#bdbdbd',
+    borderRadius: 12,
+    marginBottom: 18,
+    fontSize: 17,
+    backgroundColor: '#ffffff',
+    color: '#424242',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.08,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  primaryButton: {
+    width: '95%',
+    padding: 18,
+    borderRadius: 12,
+    backgroundColor: '#424242', // Gris oscuro para buscar
+    alignItems: 'center',
+    justifyContent: 'center',
     marginBottom: 15,
-    fontSize: 16,
-    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 5,
+  },
+  updateButton: {
+    backgroundColor: '#D32F2F', // Rojo principal para actualizar
+  },
+  buttonText: {
+    color: '#ffffff',
+    fontSize: 19,
+    fontWeight: 'bold',
+    letterSpacing: 0.5,
   },
   productDetails: {
     width: '100%',
-    marginTop: 20,
-    paddingTop: 20,
+    marginTop: 30,
+    paddingTop: 25,
     borderTopWidth: 1,
-    borderTopColor: '#eee',
+    borderTopColor: '#eeeeee',
     alignItems: 'center',
   },
   detailTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    marginBottom: 15,
-    color: '#555',
+    fontSize: 24,
+    fontWeight: '700',
+    marginBottom: 20,
+    color: '#212121',
   },
   detailText: {
-    fontSize: 16,
-    marginBottom: 5,
-    color: '#495057',
+    fontSize: 17,
+    marginBottom: 8,
+    color: '#555',
   },
   detailLabel: {
-    fontWeight: 'bold',
-    color: '#343a40',
+    fontWeight: '600',
+    color: '#424242',
   },
   discountedPriceContainer: {
-    width: '90%',
+    width: '95%',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    backgroundColor: '#e9ecef',
-    padding: 12,
-    borderRadius: 8,
-    marginBottom: 15,
+    backgroundColor: '#ffebee',
+    padding: 18,
+    borderRadius: 12,
+    marginBottom: 18,
+    borderWidth: 1,
+    borderColor: '#ef9a9a',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
   discountedPriceLabel: {
-    fontSize: 16,
-    color: '#495057',
-    fontWeight: 'bold',
+    fontSize: 17,
+    color: '#D32F2F',
+    fontWeight: '600',
   },
   discountedPriceValue: {
-    fontSize: 18,
-    color: '#dc3545',
+    fontSize: 22,
+    color: '#D32F2F',
     fontWeight: 'bold',
   },
 });

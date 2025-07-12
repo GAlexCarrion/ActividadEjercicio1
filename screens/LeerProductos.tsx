@@ -2,10 +2,10 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
 import { ref, onValue, remove } from 'firebase/database';
-import { db } from '../firebase/Config'; // Ruta actualizada a firebase/Config.tsx
+import { db } from '../firebase/Config';
 import { useNavigation } from '@react-navigation/native';
 import { StackNavigationProp } from '@react-navigation/stack';
-import { ProductStackParamList } from '../navigations/ProductoNavegacion'; // Ruta actualizada a ProductoNavegacion
+import { ProductStackParamList } from '../navigations/ProductoNavegacion';
 
 type LeerProductosScreenNavigationProp = StackNavigationProp<ProductStackParamList, 'LeerProductos'>;
 
@@ -107,8 +107,8 @@ const LeerProductosScreen = () => {
   if (loading) {
     return (
       <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#0000ff" />
-        <Text>Cargando productos...</Text>
+        <ActivityIndicator size="large" color="#D32F2F" />
+        <Text style={styles.loadingText}>Cargando productos...</Text>
       </View>
     );
   }
@@ -136,7 +136,7 @@ const LeerProductosScreen = () => {
           </Text>
         </TouchableOpacity>
         <Text style={styles.totalInventario}>
-          Total Inventario: ${totalInventario.toFixed(2)}
+          Total Inventario: <Text style={styles.totalInventarioValue}>${totalInventario.toFixed(2)}</Text>
         </Text>
       </View>
 
@@ -149,12 +149,12 @@ const LeerProductosScreen = () => {
           data={filteredProducts}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <View style={styles.productCard}>
+            <View style={[styles.productCard, item.stock < 10 && styles.lowStockCard]}>
               <Text style={styles.cardTitle}>{item.nombre}</Text>
               <Text style={styles.cardText}><Text style={styles.cardLabel}>Categoría:</Text> {item.categoria}</Text>
               <Text style={styles.cardText}><Text style={styles.cardLabel}>Stock:</Text> {item.stock}</Text>
-              <Text style={styles.cardText}><Text style={styles.cardLabel}>Precio Original:</Text> ${item.precioOriginal.toFixed(2)}</Text>
-              <Text style={styles.discountedPriceText}><Text style={styles.cardLabel}>Precio con Descuento:</Text> ${item.precioConDescuento.toFixed(2)}</Text>
+              <Text style={styles.cardText}><Text style={styles.cardLabel}>Precio Original:</Text> <Text style={styles.originalPriceValue}>${item.precioOriginal.toFixed(2)}</Text></Text>
+              <Text style={styles.discountedPriceText}><Text style={styles.cardLabel}>Precio con Descuento:</Text> <Text style={styles.discountedPriceValue}>${item.precioConDescuento.toFixed(2)}</Text></Text>
 
               <View style={styles.cardActions}>
                 <TouchableOpacity
@@ -181,120 +181,171 @@ const LeerProductosScreen = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 20,
-    backgroundColor: '#f8f9fa',
+    padding: 25,
+    backgroundColor: '#fcfcfc',
   },
   loadingContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#f8f9fa',
+    backgroundColor: '#fcfcfc',
+  },
+  loadingText: {
+    marginTop: 10,
+    fontSize: 17,
+    color: '#555',
   },
   errorContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    padding: 20,
-    backgroundColor: '#FFCCCC',
+    padding: 25,
+    backgroundColor: '#ffebee', 
+    borderRadius: 15,
+    margin: 20,
+    borderWidth: 1,
+    borderColor: '#ef9a9a',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    elevation: 4,
   },
   errorText: {
-    color: '#CC0000',
-    fontSize: 16,
+    color: '#D32F2F', 
+    fontSize: 17,
     textAlign: 'center',
-    marginBottom: 10,
+    marginBottom: 12,
+    fontWeight: '600',
   },
   title: {
-    fontSize: 26,
-    fontWeight: 'bold',
-    marginBottom: 20,
-    color: '#343a40',
+    fontSize: 30,
+    fontWeight: '700',
+    marginBottom: 25,
+    color: '#212121',
     textAlign: 'center',
+    letterSpacing: 0.5,
   },
   headerControls: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 25,
     width: '100%',
+    paddingHorizontal: 5,
   },
   filterButton: {
-    backgroundColor: '#007bff',
-    paddingVertical: 8,
-    paddingHorizontal: 15,
-    borderRadius: 5,
+    backgroundColor: '#424242', 
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.15,
+    shadowRadius: 5,
+    elevation: 4,
   },
   filterButtonActive: {
-    backgroundColor: '#28a745',
+    backgroundColor: '#D32F2F', 
   },
   filterButtonText: {
     color: '#fff',
-    fontSize: 14,
+    fontSize: 16,
     fontWeight: 'bold',
+    letterSpacing: 0.3,
   },
   totalInventario: {
-    fontSize: 16,
+    fontSize: 18,
+    fontWeight: '600',
+    color: '#212121',
+  },
+  totalInventarioValue: {
+    color: '#D32F2F', 
+    fontSize: 19,
     fontWeight: 'bold',
-    color: '#343a40',
   },
   productCard: {
-    backgroundColor: '#fff',
-    padding: 15,
-    borderRadius: 10,
-    marginBottom: 10,
+    backgroundColor: '#ffffff',
+    padding: 20,
+    borderRadius: 15,
+    marginBottom: 15,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
+    shadowOffset: { width: 0, height: 4 },
     shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
+    shadowRadius: 8,
+    elevation: 6,
+    borderLeftWidth: 6,
+    borderLeftColor: '#424242', 
+  },
+  lowStockCard: {
+    borderLeftColor: '#D32F2F', 
   },
   cardTitle: {
-    fontSize: 18,
-    fontWeight: 'bold',
-    marginBottom: 5,
-    color: '#007bff',
+    fontSize: 22,
+    fontWeight: '700',
+    marginBottom: 10,
+    color: '#212121',
   },
   cardText: {
-    fontSize: 15,
-    marginBottom: 3,
-    color: '#495057',
+    fontSize: 16,
+    marginBottom: 5,
+    color: '#555',
   },
   cardLabel: {
+    fontWeight: '600',
+    color: '#424242',
+  },
+  originalPriceValue: {
+    color: '#4CAF50', 
     fontWeight: 'bold',
-    color: '#343a40',
   },
   discountedPriceText: {
-    fontSize: 16,
+    fontSize: 18,
     fontWeight: 'bold',
-    color: '#dc3545',
-    marginTop: 5,
+    color: '#D32F2F', 
+    marginTop: 10,
+  },
+  discountedPriceValue: {
+    fontSize: 19,
+    fontWeight: 'bold',
   },
   noDataText: {
-    fontSize: 16,
+    fontSize: 18,
     color: '#6c757d',
     textAlign: 'center',
-    marginTop: 50,
+    marginTop: 60,
+    fontStyle: 'italic',
   },
   cardActions: {
     flexDirection: 'row',
     justifyContent: 'flex-end',
-    marginTop: 10,
+    marginTop: 20,
+    borderTopWidth: 1,
+    borderTopColor: '#eeeeee', 
+    paddingTop: 15,
   },
   actionButton: {
-    paddingVertical: 8,
-    paddingHorizontal: 12,
-    borderRadius: 5,
-    marginLeft: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 18,
+    borderRadius: 10,
+    marginLeft: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 4,
+    elevation: 3,
   },
   editButton: {
-    backgroundColor: '#ffc107',
+    backgroundColor: '#FFC107', 
   },
   deleteButton: {
-    backgroundColor: '#dc3545',
+    backgroundColor: '#D32F2F', 
   },
   actionButtonText: {
-    color: '#fff',
-    fontSize: 14,
+    color: '#ffffff',
+    fontSize: 15,
     fontWeight: 'bold',
+    letterSpacing: 0.3,
   },
 });
 
