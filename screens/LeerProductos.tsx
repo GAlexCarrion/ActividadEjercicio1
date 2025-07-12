@@ -1,15 +1,13 @@
-// screens/productos/LeerProductosScreen.tsx
+// screens/LeerProductos.tsx
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, FlatList, ActivityIndicator, TouchableOpacity, Alert } from 'react-native';
-import { ref, onValue, remove } from 'firebase/database'; // Importa 'remove' para eliminar directamente desde aquí
-import { db } from '../../firebase/Config';
-import { useNavigation } from '@react-navigation/native'; // Importa useNavigation
-import { StackNavigationProp } from '@react-navigation/stack'; // Importa StackNavigationProp
-import { ProductStackParamList } from '../../navigations/MainNavigator'; // Importa los tipos del navegador de productos
+import { ref, onValue, remove } from 'firebase/database';
+import { db } from '../firebase/Config'; // Ruta actualizada a firebase/Config.tsx
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { ProductStackParamList } from '../navigations/ProductoNavegacion'; // Ruta actualizada a ProductoNavegacion
 
-// Define el tipo de navegación para esta pantalla
 type LeerProductosScreenNavigationProp = StackNavigationProp<ProductStackParamList, 'LeerProductos'>;
-
 
 interface ProductData {
   id: string;
@@ -21,8 +19,7 @@ interface ProductData {
 }
 
 const LeerProductosScreen = () => {
-  const navigation = useNavigation<LeerProductosScreenNavigationProp>(); // Obtiene el objeto de navegación
-
+  const navigation = useNavigation<LeerProductosScreenNavigationProp>();
   const [allProducts, setAllProducts] = useState<ProductData[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<ProductData[]>([]);
   const [loading, setLoading] = useState(true);
@@ -66,15 +63,12 @@ const LeerProductosScreen = () => {
         code?: string;
       }
       const err = errorObject as FirebaseErrorWithCode;
-
       setError('Error al conectar con la base de datos de productos: ' + err.message);
       setLoading(false);
       console.error('Error de Firebase (productos):', err.code ?? 'No code', err.message);
     });
 
-    return () => {
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   useEffect(() => {
@@ -89,7 +83,6 @@ const LeerProductosScreen = () => {
     setFilterActive(prev => !prev);
   };
 
-  // Función para manejar la eliminación de un producto desde la lista
   const handleDeleteProduct = (productId: string, productName: string) => {
     Alert.alert(
       'Confirmar Eliminación',
@@ -100,10 +93,6 @@ const LeerProductosScreen = () => {
           text: 'Eliminar',
           onPress: () => {
             remove(ref(db, 'products/' + productId))
-              .then(() => {
-                Alert.alert('Éxito', `Producto "${productName}" eliminado.`);
-                // La lista se actualizará automáticamente gracias a onValue
-              })
               .catch((error) => {
                 Alert.alert('Error', 'No se pudo eliminar el producto: ' + error.message);
                 console.error('Error al eliminar producto:', error);
@@ -128,7 +117,7 @@ const LeerProductosScreen = () => {
     return (
       <View style={styles.errorContainer}>
         <Text style={styles.errorText}>Error: {error}</Text>
-        <Text style={styles.errorText}>Asegúrate de que tus reglas de Firebase Realtime Database permitan lectura para 'products'.</Text>
+        <Text style={styles.errorText}>Asegúrate de que tus reglas de Firebase Realtime Database permitan lectura para `products`.</Text>
       </View>
     );
   }
@@ -167,11 +156,10 @@ const LeerProductosScreen = () => {
               <Text style={styles.cardText}><Text style={styles.cardLabel}>Precio Original:</Text> ${item.precioOriginal.toFixed(2)}</Text>
               <Text style={styles.discountedPriceText}><Text style={styles.cardLabel}>Precio con Descuento:</Text> ${item.precioConDescuento.toFixed(2)}</Text>
 
-              {/* ¡NUEVOS BOTONES DE ACCIÓN! */}
               <View style={styles.cardActions}>
                 <TouchableOpacity
                   style={[styles.actionButton, styles.editButton]}
-                  onPress={() => navigation.navigate('EditarProducto', { productId: item.id })}
+                  onPress={() => navigation.navigate('EditarProductos', { productId: item.id })}
                 >
                   <Text style={styles.actionButtonText}>Editar</Text>
                 </TouchableOpacity>
@@ -286,24 +274,24 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 50,
   },
-  cardActions: { // Estilos para el contenedor de los botones de acción
+  cardActions: {
     flexDirection: 'row',
-    justifyContent: 'flex-end', // Alinea los botones a la derecha
+    justifyContent: 'flex-end',
     marginTop: 10,
   },
-  actionButton: { // Estilos base para los botones de acción
+  actionButton: {
     paddingVertical: 8,
     paddingHorizontal: 12,
     borderRadius: 5,
-    marginLeft: 10, // Espacio entre botones
+    marginLeft: 10,
   },
   editButton: {
-    backgroundColor: '#ffc107', // Amarillo para editar
+    backgroundColor: '#ffc107',
   },
   deleteButton: {
-    backgroundColor: '#dc3545', // Rojo para eliminar
+    backgroundColor: '#dc3545',
   },
-  actionButtonText: { // Estilos para el texto de los botones de acción
+  actionButtonText: {
     color: '#fff',
     fontSize: 14,
     fontWeight: 'bold',

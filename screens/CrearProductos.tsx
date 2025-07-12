@@ -1,18 +1,16 @@
-// screens/productos/CrearProductoScreen.tsx
+// screens/CrearProductos.tsx
 import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView } from 'react-native';
 import { ref, set, push } from 'firebase/database';
-import { db } from '../../firebase/Config';
-import { useNavigation } from '@react-navigation/native'; // Importa useNavigation
-import { StackNavigationProp } from '@react-navigation/stack'; // Importa StackNavigationProp
-import { ProductStackParamList } from '../../navigations/MainNavigator'; // Importa los tipos del navegador de productos
+import { db } from '../firebase/Config'; // Ruta actualizada a firebase/Config.tsx
+import { useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { ProductStackParamList } from '../navigations/ProductoNavegacion'; // Ruta actualizada a ProductoNavegacion
 
-// Define el tipo de navegación para esta pantalla
-type CrearProductoScreenNavigationProp = StackNavigationProp<ProductStackParamList, 'CrearProducto'>;
+type CrearProductosScreenNavigationProp = StackNavigationProp<ProductStackParamList, 'CrearProductos'>;
 
-const CrearProductoScreen = () => {
-  const navigation = useNavigation<CrearProductoScreenNavigationProp>(); // Obtiene el objeto de navegación
-
+const CrearProductosScreen = () => {
+  const navigation = useNavigation<CrearProductosScreenNavigationProp>();
   const [nombre, setNombre] = useState('');
   const [precio, setPrecio] = useState('');
   const [categoria, setCategoria] = useState('');
@@ -66,13 +64,10 @@ const CrearProductoScreen = () => {
     })
     .then(() => {
       Alert.alert('Éxito', 'Producto guardado correctamente en Firebase.');
-      // Limpiar los campos después de guardar
       setNombre('');
       setPrecio('');
       setCategoria('');
       setStock('');
-      // Opcional: Navegar a la lista después de guardar
-      // navigation.navigate('LeerProductos');
     })
     .catch((error) => {
       Alert.alert('Error', 'Hubo un problema al guardar el producto: ' + error.message);
@@ -121,12 +116,11 @@ const CrearProductoScreen = () => {
         color="#28a745"
       />
 
-      {/* ¡NUEVO BOTÓN AQUÍ! */}
-      <View style={styles.buttonSpacer} /> {/* Espaciador */}
+      <View style={styles.buttonSpacer} />
       <Button
         title="Ver Lista de Productos"
-        onPress={() => navigation.navigate('LeerProductos')} // Navega a la pantalla LeerProductos
-        color="#007bff" // Color azul para el botón de navegación
+        onPress={() => navigation.navigate('LeerProductos')}
+        color="#007bff"
       />
     </ScrollView>
   );
@@ -177,9 +171,9 @@ const styles = StyleSheet.create({
     color: '#dc3545',
     fontWeight: 'bold',
   },
-  buttonSpacer: { // Estilo para dar espacio entre botones
+  buttonSpacer: {
     height: 15,
   },
 });
 
-export default CrearProductoScreen;
+export default CrearProductosScreen;

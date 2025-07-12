@@ -1,13 +1,14 @@
-// screens/productos/EditarProductoScreen.tsx
+// screens/EditarProductos.tsx
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, Alert, ScrollView, ActivityIndicator } from 'react-native';
 import { ref, update, get } from 'firebase/database';
-import { db } from '../../firebase/Config'; // Asegúrate que la ruta sea '../../firebase/Config' (mayúsculas)
-import { ProductStackParamList } from '../../navigations/MainNavigator'; // Importa los tipos del navegador de productos
-import { useRoute, RouteProp } from '@react-navigation/native'; // Importa useRoute
+import { db } from '../firebase/Config'; // Ruta actualizada a firebase/Config.tsx
+import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
+import { StackNavigationProp } from '@react-navigation/stack';
+import { ProductStackParamList } from '../navigations/ProductoNavegacion'; // Ruta actualizada a ProductoNavegacion
 
-// Define el tipo de ruta para esta pantalla
-type EditarProductoScreenRouteProp = RouteProp<ProductStackParamList, 'EditarProducto'>;
+type EditarProductosScreenRouteProp = RouteProp<ProductStackParamList, 'EditarProductos'>;
+type EditarProductosScreenNavigationProp = StackNavigationProp<ProductStackParamList, 'EditarProductos'>;
 
 interface ProductData {
   id: string;
@@ -18,23 +19,18 @@ interface ProductData {
   stock: number;
 }
 
-const EditarProductoScreen = () => {
-  const route = useRoute<EditarProductoScreenRouteProp>();
-  const { productId: routeProductId } = route.params; // Extrae el productId de los parámetros de la ruta
+const EditarProductosScreen = () => {
+  const route = useRoute<EditarProductosScreenRouteProp>();
+  const navigation = useNavigation<EditarProductosScreenNavigationProp>();
+  const { productId: routeProductId } = route.params;
 
-  // Estado para el valor del TextInput del ID. Se inicializa con el ID de la ruta.
   const [productIdInput, setProductIdInput] = useState(routeProductId || '');
-  // Estado para almacenar los datos del producto actual encontrado
   const [currentProduct, setCurrentProduct] = useState<ProductData | null>(null);
-  // Estados para los nuevos valores de precio y stock
   const [newPrecio, setNewPrecio] = useState('');
   const [newStock, setNewStock] = useState('');
-  // Estado para el nuevo precio con descuento, calculado automáticamente
   const [newPrecioConDescuento, setNewPrecioConDescuento] = useState('0.00');
-  // Estado para controlar el indicador de carga
   const [loading, setLoading] = useState(false);
 
-  // useEffect para recalcular el descuento cada vez que el 'newPrecio' cambia
   useEffect(() => {
     const precioNum = parseFloat(newPrecio);
     if (!isNaN(precioNum) && precioNum > 0) {
@@ -45,16 +41,14 @@ const EditarProductoScreen = () => {
     }
   }, [newPrecio]);
 
-  // Función para buscar el producto por su ID
   const buscarProducto = useCallback(async (idToSearch: string) => {
     if (!idToSearch) {
-      // No alertamos aquí si el ID está vacío, para evitar alertas al cargar la pantalla sin ID.
       console.warn('buscarProducto: ID de búsqueda vacío. No se realizará la búsqueda.');
       return;
     }
     setLoading(true);
-    setCurrentProduct(null); // Limpia cualquier producto cargado previamente
-    setNewPrecio(''); // Limpia campos de edición
+    setCurrentProduct(null);
+    setNewPrecio('');
     setNewStock('');
 
     try {
@@ -66,7 +60,6 @@ const EditarProductoScreen = () => {
         setCurrentProduct(data);
         setNewPrecio(data.precioOriginal.toString());
         setNewStock(data.stock.toString());
-        // No mostramos alerta de éxito aquí para no interrumpir el flujo si se carga automáticamente.
       } else {
         Alert.alert('No encontrado', 'No se encontró ningún producto con ese ID.');
       }
@@ -76,20 +69,14 @@ const EditarProductoScreen = () => {
     } finally {
       setLoading(false);
     }
-  }, [db]); // db es una dependencia estable, pero es buena práctica incluirla si la función la usa.
+  }, [db]);
 
-  // useEffect para que la búsqueda se realice automáticamente cuando la pantalla se carga
-  // si ya viene con un productId en la ruta.
   useEffect(() => {
     if (routeProductId) {
-      console.log('EditarProductoScreen: routeProductId detectado:', routeProductId); // LOG para depuración
-      buscarProducto(routeProductId); // Llama a buscarProducto con el ID de la ruta
-    } else {
-      console.log('EditarProductoScreen: No routeProductId. Esperando entrada manual.'); // LOG para depuración
+      buscarProducto(routeProductId);
     }
   }, [routeProductId, buscarProducto]);
 
-  // Función para actualizar el producto en Firebase
   const editar = () => {
     if (!currentProduct || !newPrecio || !newStock) {
       Alert.alert('Error', 'Por favor, busca un producto y completa los campos para actualizar.');
@@ -114,12 +101,12 @@ const EditarProductoScreen = () => {
       stock: stockNum,
     })
     .then(() => {
-      Alert.alert('Éxito', 'Producto actualizado correctamente.');
-      // Limpiar y resetear el estado después de una actualización exitosa
-      setProductIdInput('');
-      setCurrentProduct(null);
-      setNewPrecio('');
-      setNewStock('');
+      Alert.alert('Éxito', 'Producto actualizado correctamente.', [
+        {
+          text: 'OK',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
     })
     .catch((error) => {
       Alert.alert('Error', 'Hubo un problema al actualizar los datos: ' + error.message);
@@ -137,9 +124,8 @@ const EditarProductoScreen = () => {
         value={productIdInput}
         onChangeText={setProductIdInput}
         autoCapitalize="none"
-        editable={!routeProductId} // Hazlo no editable si el ID ya viene de la ruta
+        editable={!routeProductId}
       />
-      {/* Solo muestra el botón de buscar si el ID NO viene de la ruta */}
       {!routeProductId && (
         <Button
           title="Buscar Producto"
@@ -258,4 +244,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default EditarProductoScreen;
+export default EditarProductosScreen;

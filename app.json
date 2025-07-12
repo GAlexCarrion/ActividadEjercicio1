@@ -1,12 +1,7 @@
 {
   "expo": {
-<<<<<<< HEAD
     "name": "ActividadAutonomaEjercicio1",
     "slug": "ActividadAutonomaEjercicio1",
-=======
-    "name": "T1",
-    "slug": "T1",
->>>>>>> 91ad160d9268a30ac362a8954571d86c2944ca1f
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,10 +16,6 @@
       "supportsTablet": true
     },
     "android": {
-<<<<<<< HEAD
-=======
-      "package": "com.alex.t1",
->>>>>>> 91ad160d9268a30ac362a8954571d86c2944ca1f
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
